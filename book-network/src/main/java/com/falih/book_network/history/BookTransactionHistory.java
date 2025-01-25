@@ -1,7 +1,8 @@
-package com.falih.book_network.feedback;
+package com.falih.book_network.history;
 
 import com.falih.book_network.book.Book;
 import com.falih.book_network.common.BaseEntity;
+import com.falih.book_network.user.User;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -18,14 +19,17 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Feedback extends BaseEntity {
+public class BookTransactionHistory extends BaseEntity{
 
-    private Double note;
-
-    private String comment;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
+    private boolean returned;
+
+    private boolean returnApproved;
 }
