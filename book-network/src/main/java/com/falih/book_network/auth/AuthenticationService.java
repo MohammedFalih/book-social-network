@@ -2,15 +2,20 @@ package com.falih.book_network.auth;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.falih.book_network.email.EmailService;
 import com.falih.book_network.email.EmailTemplateName;
 import com.falih.book_network.role.RoleRepository;
+import com.falih.book_network.security.JwtService;
 import com.falih.book_network.user.Token;
 import com.falih.book_network.user.TokenRepository;
 import com.falih.book_network.user.User;
@@ -32,6 +37,10 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
 
     private final EmailService emailService;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final JwtService jwtService;
 
     @Value("{application.mailing.frontend.activation-url}")
     private String activationUrl;
@@ -84,6 +93,32 @@ public class AuthenticationService {
         }
 
         return codeBuilder.toString();
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        var claims = new HashMap<String, Object>();
+        var user = ((User) auth.getPrincipal());
+        claims.put("fullname", user.getFullName());
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder().token(jwtToken).build();
+    }
+
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Invalid Token"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {
+            sendValidationMail(savedToken.getUser());
+            throw new RuntimeException("Activation Token has Expired. A new token is sent to your email");
+        }
+
+        var user = userRepository.findById(savedToken.getUser().getId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 
 }
