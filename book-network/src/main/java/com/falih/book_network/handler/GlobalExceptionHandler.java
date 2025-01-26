@@ -18,6 +18,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.falih.book_network.exception.OperationNotPermittedException;
+
 import jakarta.mail.MessagingException;
 
 @RestControllerAdvice
@@ -81,6 +83,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(BAD_REQUEST)
                 .body(ExceptionResponse.builder()
                         .businessErrorDescription("Internal Error. Contact the Admin.")
+                        .error(exception.getMessage())
+                        .build());
+    }
+
+    
+    @ExceptionHandler(OperationNotPermittedException.class)
+    public ResponseEntity<ExceptionResponse> handleException(OperationNotPermittedException exception) {
+        return ResponseEntity.status(BAD_REQUEST)
+                .body(ExceptionResponse.builder()
                         .error(exception.getMessage())
                         .build());
     }
