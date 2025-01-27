@@ -3,6 +3,7 @@ package com.falih.book_network.book;
 import java.beans.Transient;
 import java.util.List;
 
+import com.falih.book_network.common.BaseEntity;
 import com.falih.book_network.feedback.Feedback;
 import com.falih.book_network.history.BookTransactionHistory;
 import com.falih.book_network.user.User;
@@ -24,7 +25,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Book {
+public class Book extends BaseEntity {
 
     @Id
     private Integer id;
