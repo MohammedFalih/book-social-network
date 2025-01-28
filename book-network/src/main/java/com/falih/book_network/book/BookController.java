@@ -34,7 +34,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.save(request, connectedUser));
     }
 
-    @GetMapping("/{{book-id}}")
+    @GetMapping("/{book-id}")
     public ResponseEntity<BookResponse> findById(@PathVariable("book-id") Integer bookId) {
         return ResponseEntity.ok(bookService.findById(bookId));
     }
@@ -95,7 +95,7 @@ public class BookController {
         return ResponseEntity.ok(bookService.returnBorrowedBook(bookId, connectedUser));
     }
 
-    @PatchMapping("/borrow/return/{book-id}")
+    @PatchMapping("/borrow/return/approve/{book-id}")
     public ResponseEntity<Integer> approveReturnBorrowedBook(
             @PathVariable("book-id") Integer bookId, Authentication connectedUser) {
                 return ResponseEntity.ok(bookService.approveReturnBorrowedBook(bookId, connectedUser));

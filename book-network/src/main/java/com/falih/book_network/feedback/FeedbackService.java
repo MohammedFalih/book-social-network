@@ -50,10 +50,10 @@ public class FeedbackService {
     public PageResponse<FeedbackResponse> findAllFeedbacksByBook(Integer bookId, int page, int size,
             Authentication connectedUser) {
         Pageable pageable = PageRequest.of(page, size);
-        User user = ((User) connectedUser.getPrincipal());
+        // User user = ((User) connectedUser.getPrincipal());
         Page<Feedback> feedbacks = feedbackRepositary.findAllByBookId(bookId, pageable);
         List<FeedbackResponse> feedbackResponses = feedbacks.stream()
-                .map(f -> feedbackMapper.toFeedbackResponse(f, user.getId())).toList();
+                .map(f -> feedbackMapper.toFeedbackResponse(f, connectedUser.getName())).toList();
 
         return new PageResponse<>(
                 feedbackResponses,
