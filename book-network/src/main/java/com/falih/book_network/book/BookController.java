@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.falih.book_network.common.PageResponse;
-
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +31,7 @@ public class BookController {
     @PostMapping
     public ResponseEntity<Integer> saveBook(@Valid @RequestBody BookRequest request,
             Authentication connectedUser) {
+        System.out.println("Received BookRequest: " + request);
         return ResponseEntity.ok(bookService.save(request, connectedUser));
     }
 
@@ -98,15 +99,13 @@ public class BookController {
     @PatchMapping("/borrow/return/approve/{book-id}")
     public ResponseEntity<Integer> approveReturnBorrowedBook(
             @PathVariable("book-id") Integer bookId, Authentication connectedUser) {
-                return ResponseEntity.ok(bookService.approveReturnBorrowedBook(bookId, connectedUser));
+        return ResponseEntity.ok(bookService.approveReturnBorrowedBook(bookId, connectedUser));
     }
 
     @PostMapping(value = "/cover/{book-id}", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadBookCoverPicture(
-        @PathVariable("book-id") Integer bookId, 
-        @Parameter() 
-        @RequestPart("file") MultipartFile file, Authentication connectedUser
-    ) {
+            @PathVariable("book-id") Integer bookId,
+            @Parameter() @RequestPart("file") MultipartFile file, Authentication connectedUser) {
         bookService.uploadBookCoverPicture(file, connectedUser, bookId);
         return ResponseEntity.accepted().build();
     }

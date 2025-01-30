@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-rating',
@@ -7,18 +7,18 @@ import { Component, Input } from '@angular/core';
 })
 export class RatingComponent {
   @Input() rating: number = 0;
-
+  @Output() ratingClicked: EventEmitter<number> = new EventEmitter<number>();
   maxRating: number = 5;
 
-  public get fullStars(): number {
+  get fullStars(): number {
     return Math.floor(this.rating);
   }
 
-  public get hasHalfStar(): boolean {
-    return this.rating % 1 == 0;
+  get hasHalfStar(): boolean {
+    return this.rating % 1 !== 0;
   }
 
-  public get emptyStars(): number {
+  get emptyStars(): number {
     return this.maxRating - Math.ceil(this.rating);
   }
 }

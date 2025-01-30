@@ -1,5 +1,18 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.dependency.packagePresentation": "hierarchical",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "username": "falih",
+            "database": "the_book",
+            "password": "falih",
+            "connectionTimeout": 30,
+            "name": "book-social-network"
+        }
+    ]
 }
